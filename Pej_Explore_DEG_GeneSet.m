@@ -54,7 +54,7 @@ end
 function Pej_Explore_DEG_GeneSet_sub(DEG_Res1,DEG_Res2, AllSets, GeneSet, OutFolder)
 Qthr = .05;% cut off on the pvalues, both for including genes in the analysis and for the plotting the final discrepancy qvalue
 Cthr = 0;%.5; % cut-off on effect size in log2 scale
-
+outFile = [OutFolder '/Explore_DEG_Report_' GeneSet '.txt'];
 if isempty(AllSets)
     % Do it for all genes, there's no geneset
 else
@@ -115,7 +115,7 @@ Report.DEG_q_2  = Joint{2}.padj;
 Report = Pej_Struct_RowSelect(Report, I);
 Report.Index(:,1)= 1:length(Report.DEG_q_2);
 
-Pej_Write_Table([OutFolder '/Explore_DEG_Report_' GeneSet '.txt'], Report);
+Pej_Write_Table(outFile, Report);
 %% plot it all!
 Cbox = gray(256);
 Cbox(end:-1:1) = Cbox;
@@ -146,23 +146,26 @@ plot([-M M], [0  0], 'k')
 plot([-M M], [-M M], '--k')
 xlabel('1^{st} fold change (log_2)')
 ylabel('2^{nd} fold change (log_2)')
+set(gcf, 'position', [  707   153   337   274]);
+box on
 Pej_SavePlot(Fig, [OutFolder '/Figures/' GeneSet]);
 
 %% Add index numbers on genes
 Fig = open( [OutFolder '/Figures/' GeneSet '.fig']);
-
+set(gcf, 'position', [440   371   560   420]);
 Sigs = Report.Discordance_q <= log10(Qthr) & Report.Difference_in_lfc > 0;
 text(Report.log2FoldChange_1(Sigs), Report.log2FoldChange_2(Sigs), num2str(Report.Index(Sigs)), 'color', 'r', 'fontsize', 5, 'horizontalalignment', 'center', 'verticalalignment', 'middle')
 
 Sigs = Report.Discordance_q <= log10(Qthr) & Report.Difference_in_lfc < 0;
 text(Report.log2FoldChange_1(Sigs), Report.log2FoldChange_2(Sigs), num2str(Report.Index(Sigs)), 'color', 'r', 'fontsize', 5, 'horizontalalignment', 'center', 'verticalalignment', 'middle')
+
 Pej_SavePlot(Fig, [OutFolder '/Figures/' GeneSet '_Indexed']);
 
 end
 
 function DEG_Res = Read_DEG(DEGoutputfile)
 DEG_Res = Pej_Read_Table(DEGoutputfile);
-DEG_Res = Pej_Struct_RowDel(DEG_Res,isnan(DEG_Res.padj));
+% DEG_Res = Pej_Struct_RowDel(DEG_Res,isnan(DEG_Res.padj));
 DEG_Res.GeneIDs = strrep(DEG_Res.UnLabeled_C1, '"', '');
 
 tmpID = Pej_Xref(DEG_Res.GeneIDs, '/Users/pmohammadi/Desktop/LocalTMP/PEJ_Resources/Gene-Xref-25Apr2015.txt');

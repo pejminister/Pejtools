@@ -1,3 +1,16 @@
+% This file gets a hard clustering file and does enrichment test on each
+% cluster. The input file is binary-coded like this:
+
+% GeneSymbol Cluster1 Cluster2 Cluster3 ...
+% Gene1   0 1 0
+% Gene2   0 1 1
+% Gene3   0 0 0
+% ....
+
+% Each gene can be part of 0-N clusters.
+% Background for the enrichment test is all the genes in the file including
+% those that are not in any clusters.
+
 function Pej_Test_Cluster_Enrichments(ClusteringFile,DB_Path)
 Shuffle = false; % If you put this on true, it shuffles the DEG qvalues, so should technically give flat pvalues all the time.
 

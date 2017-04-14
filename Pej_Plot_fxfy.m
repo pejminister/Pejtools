@@ -15,14 +15,18 @@
 % pejman.m@gmail.com
 % ----------------------------------
 
-function Pej_plot_fxfy(x,y,fx, fy, varargin)
+function Pej_Plot_fxfy(x,y,fx, fy, varargin)
 
 plot(fx(x), fy(y), varargin{:});
 
 XtickLabels = Pej_Finverse(get(gca, 'XTick'), fx);
+set(gca, 'XTick', get(gca, 'XTick'));
+% set(gca, 'XTickLabelMode', 'manual');
 set(gca, 'XTickLabel', XtickLabels);
 
 YtickLabels = Pej_Finverse(get(gca, 'YTick'), fy);
+set(gca, 'YTick', get(gca, 'YTick'));
+% set(gca, 'YTickLabelMode', 'manual');
 set(gca, 'YTickLabel', YtickLabels);
 
 end

@@ -1,14 +1,13 @@
 % This scripts saves the figure, Fig, in the address, OutFig, in .eps, and
 % .fig formats and closes it.
 
-function Pej_SavePlot_Image(Fig, OutFig, Transparent)
+function Pej_SavePlot(Fig, OutFig, Transparent)
 if nargin <3; Transparent = true; end
 
 [pathstr,~,~] = fileparts(OutFig);
 if ~isempty(pathstr) && ~exist(pathstr, 'dir'); mkdir(pathstr);end
 
 saveas(Fig, [OutFig '.fig'])
-
 try
     set(Fig, 'inverthardcopy', 'off');
 catch err
@@ -18,10 +17,13 @@ try
 catch err
 end
 if Transparent
-        set(gca, 'color', 'w')
-%     set(gcf, 'color', 'none')  
+    %     set(gca, 'color', 'w')
+    %     set(gcf, 'color', 'none')
+    set(gcf, 'color', 'w')
+    
 end
-print(Fig, [OutFig], '-dpng', '-r0', '-loose');
+% print(Fig, [OutFig '.eps'], '-depsc2', '-r0', '-loose');
+print(Fig, [OutFig '.eps'], '-depsc2', '-r300', '-loose');
 
 % set(Fig, 'PaperPositionMode', 'manual');
 % set(Fig, 'PaperUnits','centimeters');

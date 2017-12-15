@@ -1,3 +1,7 @@
+% this function is written to be fast. It might be inaccurate in cases
+% where |mu| is large like >5 and x and xc are also on the extremes. 
+% Use Pej_pdf_BLN_accurate.m for more accuracy (it's sloW!!!!)
+%
 % This function calculate probability density function for Binomial
 % Logit Normal distribution, that is a binomially distributed variable
 % "x" with ratio "r" where  logit-transformed r is itself normally
@@ -10,9 +14,16 @@
 % Pejman, Oct 2017
 % pejman.m@gmail.com
 
-function px = Pej_pdf_BLN(x, xc, mu, v, NormalApproximation, DropBinomialCoeff)
+function px = Pej_pdf_BLN(x, xc, mu, v, DropBinomialCoeff)
+NN = 100; % number of points to integrate over
 minV = 1E-3; % for variances less than this, binomial probability is reported. This is because for very small "v"s the calculations get numerically unstable.
-px = nan(size(x));
+% v = Std^2;
+
+if isrow(x)
+% make sure it's a column vector
+    x = x';
+    xc=xc';
+end
 
 if mu==inf
     px = double(xc==0);
@@ -38,27 +49,24 @@ if length(mu)>1
 end
 
 if nargin < 5
-    NormalApproximation = false; % by default calculate the exact value
-end
-
-if nargin < 6
     DropBinomialCoeff = false; % by default calculate the normalized value
 end
 
-if NormalApproximation
-    for i = 1:numel(x)
-        px(i) = BLN_NrmAprx_sub(x(i),xc(i), mu, v);
-    end
-else
-    for i = 1:numel(x)
-        px(i) = BLN_sub(x(i),xc(i), mu, v, DropBinomialCoeff);
-    end
-end
-NaNflt = isnan(px);
-if any(NaNflt)
-    warning('Numerical failure, substituted with binomial pdf!')
-    px(NaNflt) = binopdf(x(NaNflt), x(NaNflt)+xc(NaNflt), lgist(mu));
-end
+Z = (gammaln(x+xc + 1)-gammaln(x + 1)-gammaln(xc + 1))-log(2*pi*v)*.5;
+rd = linspace(0,1,NN+1);
+% f  = fx(rd, x, xc, mu, v);
+% px = -log(2*NN)+Z+log(f(:,1)+f(:,end)+2*sum(f(:,2:end-1),2));
+% 
+rd2 = rd+(rd(2)-rd(1))/2;
+rd2(end)=[];
+
+f  = fx(rd2, x, xc, mu, v, Z);
+px= exp(-log(NN)+log(sum(f,2)));
+% NaNflt = isnan(px);
+% if any(NaNflt)
+%     warning('Numerical failure, substituted with binomial pdf!')
+%     px(NaNflt) = binopdf(x(NaNflt), x(NaNflt)+xc(NaNflt), lgist(mu));
+% end
 end
 
 
@@ -75,31 +83,9 @@ function r = lgist(mu)
 r = 1./(1+exp(-mu));
 end
 
-function px = BLN_sub(x,xc, mu, v, DropBinomialCoeff)
-
-if DropBinomialCoeff
-    Z = 1;
-else
-%     Z = nchoosek(x+xc,x);
-    Z = exp(gammaln(x+xc + 1)-gammaln(x + 1)-gammaln(xc + 1));
-end
-% calculate the probability for one single point
-px = Z./sqrt(2*pi*v)*integral(@(r)fx(r, x, xc, mu, v), 0, 1);
-end
-
-function dp = fx(r, x, xc, mu, v)
-dp = exp(log(r).*(x-1)+log(1-r).*(xc-1)-(((lgit(r)-mu).^2)./(2*v)));
-end
-
-function px = BLN_NrmAprx_sub(x,xc, mu, v)
-% calculate the probability for one signle point
-px = integral(@(r)fx_NrmAprx(r, x, xc, mu, v), 0, 1);
-end
-
-function dp = fx_NrmAprx(r, x, xc, mu, v)
-n = x+xc;
-p = n.*r;
-t1 = -((x-p).^2)./((2.*p.*(1-r)));
-t2 = -((lgit(r)-mu).^2)./(2.*v);
-dp = exp(t1+t2)./(2.*pi.*sqrt(p.*(1-r).*v).*r.*(1-r));
+function dp = fx(r, x, xc, mu, v, z)
+dp = exp(log(r).*(x-1)+log(1-r).*(xc-1)-(((lgit(r)-mu).^2)./(2*v))+z);
+% % lr  = log(r);
+% % lrc = log(1-r);
+% dp = exp(lr.*(x-1)+lrc.*(xc-1)-(((lr-lrc-mu).^2)./(2*v)));
 end

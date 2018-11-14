@@ -42,8 +42,4 @@ if px>.5
 end
 px = px*2;% Two tailed
 
-
-if px>1
-    1
-end
 end

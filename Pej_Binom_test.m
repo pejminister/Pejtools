@@ -1,40 +1,31 @@
-% this does a binomial twosided test
-function P1 =Pej_Binom_test(X,N,p)
+% this does a binomial two-sided test
+function p_val2 = Pej_Binom_test(X,N,p)
 m = p.*N;
-if numel(p)==1
-    p = ones(size(X))*p;
-end
-if numel(N)==1
-    N = ones(size(X))*N;
+[errorcode, X, N, p] = distchck(3,X,N,p);
+if errorcode > 0
+    error(message('stats:binopdf:InputSizeMismatch'));
 end
 
-F = X<=m;G=~F;
+t = binopdf(X,N,p) * (1+1E-7);
+% p_val =  nan(size(X));
+p_val2 = nan(size(X));
+for i = 1:length(X)
+    if X(i)==m(i)
+%         p_val(i)=1;
+        p_val2(i)=1;
+    elseif X(i)<m(i)
+%         y  = sum(binopdf(ceil(m(i)):N(i),N(i), p(i))<=t(i));
+%         p_val(i) = binocdf(X(i), N(i), p(i)) + binocdf(N(i)-y, N(i), p(i), 'upper');
+        tp = binopdf(ceil(m(i)):N(i),N(i), p(i));
+        p_othertail = sum(tp(tp<=t(i)));
+        p_val2(i) =p_othertail+ binocdf(X(i), N(i), p(i));
+    else
+%         y= sum(binopdf(0:floor(m(i)),N(i), p(i))<=t(i));
+%         p_val(i) = binocdf(y-1, N(i), p(i)) + binocdf(X(i)-1, N(i), p(i), 'upper');        
+        tp = binopdf(0:floor(m(i)),N(i), p(i));
+        p_othertail = sum(tp(tp<=t(i)));
+        p_val2(i) =p_othertail+ binocdf(X(i)-1, N(i), p(i), 'upper');
+    end
 
-P1 = nan(size(X));
-if ~isempty(G)
-    P1(G) = binocdf(X(G)-1,N(G),p(G), 'upper');
 end
-if ~isempty(F)
-    P1(F) = binocdf(X(F)  ,N(F),p(F));
 end
-P1=P1*2;
-
-P1(X==m)=1;
-end
-
-
-%% R does the test in a different way, here's the implementation:
-% t = binopdf(X,N,M) * (1+1E-7);
-% P1 =  nan(size(X));
-% for i = 1:length(X)
-%     if X(i)==m(i)
-%         P1(i)=1;
-%     elseif X(i)<m(i)
-%         y= sum(binopdf(ceil(m(i)):N(i),N(i), M(i))<=t(i));
-%         P1(i) = binocdf(X(i), N(i), M(i)) + binocdf(N(i)-y, N(i), M(i), 'upper');
-%     else
-%         y= sum(binopdf(0:floor(m(i)),N(i), M(i))<=t(i));
-%         P1(i) = binocdf(y-1, N(i), M(i)) + binocdf(X(i)-1, N(i), M(i), 'upper');
-%     end
-%
-% end

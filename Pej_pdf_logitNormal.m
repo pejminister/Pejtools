@@ -3,7 +3,7 @@
 
 function px = Pej_pdf_logitNormal(x,mu,Std)
 px = nan(size(x));
-F = x<=1 & x>=0;
+F = x<1 & x>0;
 px(~F) = 0;
 
 xF = x(F);

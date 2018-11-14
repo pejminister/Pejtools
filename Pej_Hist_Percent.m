@@ -20,11 +20,12 @@ if isscalar(Bins)
 end
 
 Cbox = lines(7);
+Cbox(2,:) = [0.8500 0.3250 0.0980];
 
 Fig = gcf; %figure;
 hist(X, Bins);
 h = findobj(gca,'Type','patch');
-set(h, 'FaceColor',[0 0 0]);
+set(h, 'FaceColor',[0 0.4470 0.7410]*.5);
 set(h, 'EdgeColor',[1 1 1]*.6);
 set(h, 'linewidth',.5);
 

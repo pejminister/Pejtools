@@ -11,7 +11,14 @@ Fin = fopen(File, 'r');
 tmpLine = '#';
 while tmpLine(1)=='#';tmpLine = fgetl(Fin);end % Skip header lines
 Header = regexp(tmpLine, ['([^' Delimiter ']*)'], 'Tokens');
-InBuff = textscan(Fin, ['%s' repmat( '%f', 1, length(Header)-1)], 'CollectOutput',1, 'delimiter', Delimiter, 'CommentStyle', '#','treatAsEmpty',{'NA','na'}); fclose(Fin);
+InBuff = textscan(Fin, ['%s' repmat( '%f', 1, length(Header)-1)], 'CollectOutput',1, 'delimiter', Delimiter, 'CommentStyle', '#','treatAsEmpty',{'NA','na'}); 
+
+if ~feof(Fin)
+    beep
+    fprintf('Warning: Import stopped before reaching the end of the file: %s\n. Here''s the first unread lines:\n%s\n%s\n', File, fgetl(Fin), fgetl(Fin));
+end
+
+fclose(Fin);
 GeneData.GeneNames = InBuff{1};
 GeneData.Expressions = double(InBuff{2}); clear InBuff
 GeneData.SampleLabels = vertcat(Header{2:end});

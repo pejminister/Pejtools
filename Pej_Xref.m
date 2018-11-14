@@ -10,7 +10,7 @@
 %--------------
 function Ynonunique = Pej_Xref(Xnonunique,Xref_File, LeaveEmpty)
 if nargin<2 || isempty(Xref_File)
-    Xref_File = '~/Desktop/LocalTMP/PEJ_Resources/Gene-Xref-16Mar2016.txt';
+    Xref_File = '~/Desktop/LocalTMP/PEJ_Resources/mart_export_Aug2018.txt';
 end
 
 if nargin <3
@@ -43,9 +43,18 @@ end
 [nIntersct dbI] = max(Intersct);
 disp(['Identified ID Type: ' IDnames{dbI} ' (IDs matched: ' int2str(nIntersct) '/' int2str(min(500,n)) ')']);
 [~, ai, bi] = intersect(X, Xref.(IDnames{dbI}));
+%% Make sure empty cells in the input don't get match to somthing in the output
+IdxNull = find(strcmp('', X));
+if ~isempty(IdxNull)
+    I2Null = find(ai==IdxNull);
+    ai(I2Null)=[];
+    bi(I2Null)=[];
+end
+
+%% the rest
 disp([int2str(length(ai)) ' out of ' int2str(n) ' unique IDs were found in the cross-reference.']);
 if length(ai)/n < .9
-%     beep
+    %     beep
     warning('Less that 90% of the IDs were found in the Xref, you might need a better reference!!')
 end
 for i = length(IDnames):-1:1
@@ -63,5 +72,7 @@ end
 end
 
 Ynonunique = Pej_Struct_RowSelect(Y, iX);
+
+
 
 end

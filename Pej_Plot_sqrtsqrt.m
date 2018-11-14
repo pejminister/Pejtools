@@ -9,5 +9,6 @@ tmpTicksY = get(gca, 'YTick');
 
 set(gca, 'XTickLabel', tmpTicksX.^2);
 set(gca, 'YTickLabel', tmpTicksY.^2);
-
+set(gca, 'XTickMode', 'manual')
+set(gca, 'YTickMode', 'manual')
 end

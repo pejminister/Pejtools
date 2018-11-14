@@ -20,5 +20,4 @@ b = a .* (1-p)./p;
 
 q = betarnd(a,b);
 x = binornd(N,q);
-
 end

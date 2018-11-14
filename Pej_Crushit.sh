@@ -20,7 +20,7 @@ if [ -d  $OutFldr ]; then
 fi
 
 mkdir $OutFldr
-tawk -v Col=$2 -v OF=$OutFldr '{
+awk -F'\t' -v OFS="\t" -v Col=$2 -v OF=$OutFldr '{
 if (NR==1)
 {
     Header=$0

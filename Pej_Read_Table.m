@@ -1,10 +1,16 @@
 % This reads a .CSV or a tab-separated table.
 % The first line is expected to be the header
 % Written by PEj oct 2013
+
+% Parameters
+% NumericalNaNs: If this is true, then all NaNs are assumed to be numerical columns
 %-------------
 
-function Data = Pej_Read_Table(Path2File, DLM, ReportSwitch, FormatString, ReadAllAsString)
-if nargin <5
+function Data = Pej_Read_Table(Path2File, DLM, ReportSwitch, FormatString, ReadAllAsString, NumericalNaNs)
+if nargin <6|| isempty(NumericalNaNs)
+    NumericalNaNs = false;
+end
+if nargin <5|| isempty(ReadAllAsString)
     ReadAllAsString = false;
 end
 Fin = fopen(Path2File, 'r');
@@ -60,6 +66,15 @@ if nargin<4 || isempty(FormatString)
         while strcmpi('NA', Firstrow{i}) || strcmpi('NaN', Firstrow{i})
                         % it might be a missing numerical or missing text
             Firstrow = regexp(fgetl(Fin), dlm, 'split');
+            if feof(Fin) || NumericalNaNs
+                % assume all NA's are numerical columns and hope for the
+                % best!
+                Firstrow = strrep(Firstrow, 'NaN', '1');
+                Firstrow = strrep(Firstrow, 'nan', '1');
+                Firstrow = strrep(Firstrow, 'NAN', '1');
+                Firstrow = strrep(Firstrow, 'NA', '1');
+                Firstrow = strrep(Firstrow, 'na', '1');
+            end
         end
         %     if ~isempty(regexp(Firstrow{i}, '^[+-]?\d+$'))
         %         % It's an integer

@@ -15,16 +15,17 @@ for i = Nbins:-1:1
     CI(plotZ<=Zqs(i)) = i;
 end
 hold on
-set (gca,'Ydir','reverse')
-set (gca,'Xdir','reverse')
-set(gca, 'XAxisLocation', 'Top')
-set(gca, 'YAxisLocation', 'Right')
+% set (gca,'Ydir','reverse')
+% set (gca,'Xdir','reverse')
+% set(gca, 'XAxisLocation', 'Top')
+% set(gca, 'YAxisLocation', 'Right')
 
 PlotI = randperm(PN); % plot points in an arbitrary order, in order to make sure there won't be any artificial collor patterns dues to the plot orderring.
 for px = PlotI
-    plot(plotX(px),plotY(px), 'o', ...
-        'markersize', 4, ...
+    plot(plotX(px),plotY(px), '.', ...
+        'markersize', 8, ...
         'linewidth', 1, ...
+        'color', Cbox(CI(px),:), ...
         'MarkerEdgeColor', Cbox(CI(px),:), ...
         'MarkerFaceColor', 'none')%Cbox(CI(px),:))
 end

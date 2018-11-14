@@ -21,7 +21,7 @@ if [ -d  $OutFldr ]; then
 fi
 
 mkdir $OutFldr
-sort-header -k$2,$2 $1 | tawk -v Col=$2 -v OF=$OutFldr '{
+sort-header -k$2,$2 $1 | awk -F'\t' -v OFS="\t" -v Col=$2 -v OF=$OutFldr '{
 if (NR==1)
 {
     Header=$0

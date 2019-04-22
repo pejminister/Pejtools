@@ -7,8 +7,15 @@ if isempty(X)
     PVAL=[];
 end
 F = ~isnan(X+Y);
+
+if ~any(F)
+    RHO = nan(2,2);
+    PVAL= nan;
+    return
+end
+
 if nargin > 2
-[RHO,PVAL] = corr(X(F), Y(F), varargin{:});
+    [RHO,PVAL] = corr(X(F), Y(F), varargin{:});
 else
     [RHO,PVAL] = corr(X(F), Y(F));
 end

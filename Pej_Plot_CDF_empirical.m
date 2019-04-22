@@ -2,6 +2,9 @@ function Pej_Plot_CDF_empirical(X, N, Color)
 if nargin<2
     N = 100;
 end
+if length(N)>1
+    N = length(N);
+end
 if nargin<3
     Color = [1 1 1] * 0;
 end
@@ -16,14 +19,16 @@ if ~InfSwitch
 end
 
 if N>=100
-% D100 = D ;%.01:.01:.99;
-D100 = .01:.01:.99;
+    % D100 = D ;%.01:.01:.99;
+    D100 = .01:.01:.99;
+else
+    D100 = D ;
 end
 
 Qs = quantile(X,D);
 Qs100 = quantile(X,D100);
-plot(Qs, D*100,       '-', 'markerfacecolor', Color, 'markersize', 2, 'color', Color, 'linewidth', .5); hold on
-plot(Qs100, D100*100, 's', 'markerfacecolor', Color, 'markersize', 2, 'color', Color, 'linewidth', .5);
+plot(Qs, D*100,       '-', 'markerfacecolor', Color, 'markersize', 2, 'color', Color, 'linewidth', 1); hold on
+plot(Qs100, D100*100, 's', 'markerfacecolor', Color, 'markersize', 2, 'color', Color, 'linewidth', 1);
 ylabel('Percentile (%)')
 set(gcf, 'position', [1 1 210 200]);
 end

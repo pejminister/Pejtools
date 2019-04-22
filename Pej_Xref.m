@@ -10,7 +10,7 @@
 %--------------
 function Ynonunique = Pej_Xref(Xnonunique,Xref_File, LeaveEmpty)
 if nargin<2 || isempty(Xref_File)
-    Xref_File = '~/Desktop/LocalTMP/PEJ_Resources/mart_export_Aug2018.txt';
+    Xref_File = '~/Desktop/LocalTMP/PEJ_Resources/Xrefs/mart_export_Aug2018_GRCH38.txt';
 end
 
 if nargin <3

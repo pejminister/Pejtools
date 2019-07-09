@@ -1,6 +1,5 @@
 % this function plots a bar plot with error bars on it.
 function h = Pej_Bar_ErrorBar(x, xl, xu, Labels, varargin)
-h=figure;
 L = length(x);
 h = bar(1:L, x, 'k', varargin{:});
 hold on

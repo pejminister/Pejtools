@@ -66,6 +66,9 @@ if nargin<4 || isempty(FormatString)
         while strcmpi('NA', Firstrow{i}) || strcmpi('NaN', Firstrow{i})
                         % it might be a missing numerical or missing text
             Firstrow = regexp(fgetl(Fin), dlm, 'split');
+            if ReadAllAsString
+               break; 
+            end
             if feof(Fin) || NumericalNaNs
                 % assume all NA's are numerical columns and hope for the
                 % best!

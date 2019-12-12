@@ -1,4 +1,4 @@
-this makes a scatter plot and lowess on it
+%this makes a scatter plot and lowess on it
 function Pej_Scatter_LOWESS(X, Y, RobustFit)
 if nargin<3
     RobustFit=false;
